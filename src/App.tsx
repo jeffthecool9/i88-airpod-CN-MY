@@ -1047,7 +1047,7 @@ useEffect(() => {
     { title: "注册", desc: "创建您的账号", image: registerImg },
     {
       title: "存款",
-      desc: "存款 $50 解锁奖励",
+      desc: "存款 RM50 解锁奖励",
       image: depositImg,
     },
     { title: "奖励", desc: "即送 188 FS", image: playImg },
