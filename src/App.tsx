@@ -325,43 +325,23 @@ const RegistrationForm = () => {
     formData.phone &&
     formData.agreedToTerms;
 
- const handleFinalCTA = async () => {
+ const handleFinalCTA = () => {
   if (!isStep2Valid) return;
 
-  const payload = {
-    ...formData,
-    turnstileToken,
-  };
+  // Meta Lead tracking
+  window.trackCTA?.("final_complete_registration");
 
-  try {
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+  // Optional custom event
+  window.trackCustomEvent?.("Final_CTA_Click", {
+    button_name: "Complete Registration",
+    step: 2,
+    username: formData.name,
+  });
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      setTurnstileError(data.message || "Verification failed.");
-      return;
-    }
-
-    // ✅ ONLY fire after success
-    window.trackCTA?.("final_complete_registration");
-
-    window.trackCustomEvent?.("Final_CTA_Click", {
-      button_name: "Complete Registration",
-      step: 2,
-    });
-
-    setIsSuccess(true);
-    setCountdown(8);
-    setProgress(0);
-
-  } catch (error) {
-    console.error("Registration error:", error);
-  }
+  // Show success page
+  setIsSuccess(true);
+  setCountdown(8);
+  setProgress(0);
 };
 
   useEffect(() => {
@@ -728,19 +708,20 @@ const RegistrationForm = () => {
                   </div>
 
                   <motion.button
-                    whileHover={isStep2Valid ? { scale: 1.02 } : {}}
-                    whileTap={isStep2Valid ? { scale: 0.98 } : {}}
-                    onClick={handleFinalCTA}
-                    disabled={!isStep2Valid}
-                    className={`flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,#1D4ED8_0%,#2563EB_42%,#22D3EE_100%)] py-4 font-bold text-white shadow-[0_18px_40px_rgba(37,99,235,0.38)] transition-all ${
-                      !isStep2Valid
-                        ? "cursor-not-allowed opacity-40 grayscale-[0.5]"
-                        : "hover:brightness-110 hover:shadow-[0_20px_50px_rgba(34,211,238,0.28)]"
-                    }`}
-                  >
-                    完成注册
-                    <CheckCircle2 className="h-5 w-5" />
-                  </motion.button>
+  type="button"
+  whileHover={isStep2Valid ? { scale: 1.02 } : {}}
+  whileTap={isStep2Valid ? { scale: 0.98 } : {}}
+  onClick={handleFinalCTA}
+  disabled={!isStep2Valid}
+  className={`flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,#1D4ED8_0%,#2563EB_42%,#22D3EE_100%)] py-4 font-bold text-white shadow-[0_18px_40px_rgba(37,99,235,0.38)] transition-all ${
+    !isStep2Valid
+      ? "cursor-not-allowed opacity-40 grayscale-[0.5]"
+      : "hover:brightness-110 hover:shadow-[0_20px_50px_rgba(34,211,238,0.28)]"
+  }`}
+>
+  完成注册
+  <CheckCircle2 className="h-5 w-5" />
+</motion.button>
 
                   <motion.button
   type="button"
